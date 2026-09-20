@@ -55,6 +55,9 @@ Geometry.cs
 obj/Debug/netstandard2.1/
  .NETStandard,Version=v2.1.AssemblyAttributes.cs
  Geo2D.AssemblyInfo.cs
+Polies/
+ Polychain.cs
+ PolyIndex.cs
 Primitives/
  Bounds.cs
  Capsule.cs
