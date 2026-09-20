@@ -24,7 +24,7 @@ namespace Kojuelo.Geo2D
                 return;
             }
 
-            _normal = new Point(x, y);
+            _normal = new Point(x / distance, y / distance);
             CalculateAnglesFromNormal(_normal, out _radians, out _degrees);
         }
 
