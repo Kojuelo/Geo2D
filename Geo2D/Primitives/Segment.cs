@@ -75,6 +75,26 @@ namespace Kojuelo.Geo2D
             Translate(direction.GetTranslation(length));
         }
 
+        public void RotateRadians(float rotationRadians)
+        {
+            if (rotationRadians == 0f)
+            {
+                return;
+            }
+
+            float sin = MathF.Sin(rotationRadians);
+            float cos = MathF.Cos(rotationRadians);
+
+            var aTemp = a;
+            var bTemp = b;
+
+            a.x = (cos * aTemp.x) - (sin * aTemp.y);
+            a.y = (sin * aTemp.x) + (cos * aTemp.y);
+
+            b.x = (cos * bTemp.x) - (sin * bTemp.y);
+            b.y = (sin * bTemp.x) + (cos * bTemp.y);
+        }
+
         public void RotateRadians(in Point pivot, float rotationRadians)
         {
             if (rotationRadians == 0f)
@@ -96,21 +116,9 @@ namespace Kojuelo.Geo2D
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RotateDegrees(in Point pivot, float rotationDegrees)
-        {
-            RotateRadians(pivot, AngleUtility.DegreesToRadians(rotationDegrees));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RotateRadiansFromA(float rotationRadians)
         {
             RotateRadians(a, rotationRadians);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RotateDegreesFromA(float rotationDegrees)
-        {
-            RotateRadiansFromA(AngleUtility.DegreesToRadians(rotationDegrees));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -120,12 +128,42 @@ namespace Kojuelo.Geo2D
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RotateDegrees(float rotationDegrees)
+        {
+            RotateRadians(AngleUtility.DegreesToRadians(rotationDegrees));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RotateDegrees(in Point pivot, float rotationDegrees)
+        {
+            RotateRadians(pivot, AngleUtility.DegreesToRadians(rotationDegrees));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RotateDegreesFromA(float rotationDegrees)
+        {
+            RotateRadiansFromA(AngleUtility.DegreesToRadians(rotationDegrees));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RotateDegreesFromB(float rotationDegrees)
         {
             RotateRadiansFromB(AngleUtility.DegreesToRadians(rotationDegrees));
         }
 
-        public void Scale(Point pivot, float xFactor, float yFactor)
+        public void Scale(float xFactor, float yFactor)
+        {
+            a.Scale(xFactor, yFactor);
+            b.Scale(xFactor, yFactor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Scale(float factor)
+        {
+            Scale(factor, factor);
+        }
+
+        public void Scale(in Point pivot, float xFactor, float yFactor)
         {
             a.x = pivot.x + ((a.x - pivot.x) * xFactor);
             a.y = pivot.y + ((a.y - pivot.y) * yFactor);
@@ -135,15 +173,33 @@ namespace Kojuelo.Geo2D
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Scale(in Point pivot, float factor)
+        {
+            Scale(pivot, factor, factor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ScaleFromA(float xFactor, float yFactor)
         {
             Scale(a, xFactor, yFactor);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ScaleFromA(float factor)
+        {
+            ScaleFromA(factor, factor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ScaleFromB(float xFactor, float yFactor)
         {
             Scale(b, xFactor, yFactor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ScaleFromB(float factor)
+        {
+            Scale(b, factor, factor);
         }
 
         public readonly void GetBounds(out float xMin, out float yMin, out float xMax, out float yMax)
@@ -204,6 +260,24 @@ namespace Kojuelo.Geo2D
             return GetTranslated(translation);
         }
 
+        public readonly Segment GetRotatedRadians(float rotationRadians)
+        {
+            if (rotationRadians == 0f)
+            {
+                return this;
+            }
+
+            float sin = MathF.Sin(rotationRadians);
+            float cos = MathF.Cos(rotationRadians);
+
+            return new Segment(
+                (cos * a.x) - (sin * a.y),
+                (sin * a.x) + (cos * a.y),
+                (cos * b.x) - (sin * b.y),
+                (sin * b.x) + (cos * b.y)
+            );
+        }
+
         public readonly Segment GetRotatedRadians(in Point pivot, float rotationRadians)
         {
             if (rotationRadians == 0f)
@@ -226,20 +300,9 @@ namespace Kojuelo.Geo2D
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly Segment GetRotatedDegrees(in Point pivot, float rotationDegrees)
-        {
-            return GetRotatedRadians(pivot, AngleUtility.DegreesToRadians(rotationDegrees));
-        }
-
         public readonly Segment GetRotatedRadiansFromA(float rotationRadians)
         {
             return GetRotatedRadians(a, rotationRadians);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly Segment GetRotatedDegreesFromA(float rotationDegrees)
-        {
-            return GetRotatedRadiansFromA(AngleUtility.DegreesToRadians(rotationDegrees));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -249,9 +312,43 @@ namespace Kojuelo.Geo2D
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Segment GetRotatedDegrees(float rotationDegrees)
+        {
+            return GetRotatedRadians(AngleUtility.DegreesToRadians(rotationDegrees));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Segment GetRotatedDegrees(in Point pivot, float rotationDegrees)
+        {
+            return GetRotatedRadians(pivot, AngleUtility.DegreesToRadians(rotationDegrees));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Segment GetRotatedDegreesFromA(float rotationDegrees)
+        {
+            return GetRotatedRadiansFromA(AngleUtility.DegreesToRadians(rotationDegrees));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly Segment GetRotatedDegreesFromB(float rotationDegrees)
         {
             return GetRotatedRadiansFromB(AngleUtility.DegreesToRadians(rotationDegrees));
+        }
+
+        public readonly Segment GetScaled(float xFactor, float yFactor)
+        {
+            return new Segment(
+                a.x * xFactor,
+                a.y * yFactor,
+                b.x * xFactor,
+                b.y * yFactor
+            );
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Segment GetScaled(float factor)
+        {
+            return GetScaled(factor, factor);
         }
 
         public readonly Segment GetScaled(in Point pivot, float xFactor, float yFactor)
@@ -265,15 +362,33 @@ namespace Kojuelo.Geo2D
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Segment GetScaled(in Point pivot, float factor)
+        {
+            return GetScaled(pivot, factor, factor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly Segment GetScaledFromA(float xFactor, float yFactor)
         {
             return GetScaled(a, xFactor, yFactor);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Segment GetScaledFromA(float factor)
+        {
+            return GetScaled(a, factor, factor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly Segment GetScaledFromB(float xFactor, float yFactor)
         {
             return GetScaled(b, xFactor, yFactor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Segment GetScaledFromB(float factor)
+        {
+            return GetScaled(b, factor);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

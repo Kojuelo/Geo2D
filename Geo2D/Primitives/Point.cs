@@ -122,6 +122,32 @@ namespace Kojuelo.Geo2D
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Scale(float xFactor, float yFactor)
+        {
+            x *= xFactor;
+            y *= yFactor;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Scale(float factor)
+        {
+            Scale(factor, factor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Scale(in Point pivot, float xFactor, float yFactor)
+        {
+            x = pivot.x + ((x - pivot.x) * xFactor);
+            y = pivot.y + ((y - pivot.y) * yFactor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Scale(in Point pivot, float factor)
+        {
+            Scale(pivot, factor, factor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly Point GetTranslated(float xTranslation, float yTranslation)
         {
             return new Point(x + xTranslation, y + yTranslation);
@@ -171,6 +197,30 @@ namespace Kojuelo.Geo2D
         public readonly Point GetRotatedDegrees(in Point pivot, float rotationDegrees)
         {
             return GetRotatedRadians(pivot, AngleUtility.DegreesToRadians(rotationDegrees));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Point GetScaled(float xFactor, float yFactor)
+        {
+            return new Point(x * xFactor, y * yFactor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Point GetScaled(float factor)
+        {
+            return GetScaled(factor, factor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Point GetScaled(in Point pivot, float xFactor, float yFactor)
+        {
+            return new Point(pivot.x + ((x - pivot.x) * xFactor), pivot.y + ((y - pivot.y) * yFactor));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Point GetScaled(in Point pivot, float factor)
+        {
+            return GetScaled(pivot, factor, factor);
         }
 
         public readonly override string ToString()
