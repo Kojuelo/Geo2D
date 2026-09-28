@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 
 
@@ -38,13 +39,13 @@ namespace Kojuelo.Geo2D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(in Capsule a, in Capsule b)
         {
-            return (a.segment == b.segment) && (a.radius == b.radius);
+            return (a.segment == b.segment) && (MathF.Abs(a.radius - b.radius) < Geometry.EPSILON);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(in Capsule a, in Capsule b)
         {
-            return (a.segment != b.segment) || (a.radius != b.radius);
+            return (a.segment != b.segment) || (MathF.Abs(a.radius - b.radius) >= Geometry.EPSILON);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

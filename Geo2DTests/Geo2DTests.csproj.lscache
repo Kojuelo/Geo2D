@@ -59,6 +59,7 @@ TemporaryDependencyNodeTargetIdentifier=net10.0
   @folderNames=..,..,..,..,.nuget,packages,xunit.v3.core.mtp-v2,4.0.1,_content
  DefaultRunnerReporters.cs
   @folderNames=..,..,..,..,.nuget,packages,xunit.v3.core.mtp-v2,4.0.1,_content
+CircleTests.cs
 obj/Debug/net10.0/
  .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
  Geo2DTests.AssemblyInfo.cs

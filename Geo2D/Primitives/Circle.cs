@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 
 
@@ -26,13 +27,13 @@ namespace Kojuelo.Geo2D
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(in Circle a, in Circle b)
         {
-            return (a.center == b.center) && (a.radius == b.radius);
+            return (a.center == b.center) && (MathF.Abs(a.radius - b.radius) < Geometry.EPSILON);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator !=(in Circle a, in Circle b)
         {
-            return (a.center != b.center) || (a.radius != b.radius);
+            return (a.center != b.center) || (MathF.Abs(a.radius - b.radius) >= Geometry.EPSILON);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -79,6 +80,56 @@ namespace Kojuelo.Geo2D
             Translate(direction.GetTranslation(length));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RotateRadians(float rotationRadians)
+        {
+            center.RotateRadians(rotationRadians);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RotateRadians(in Point pivot, float rotationRadians)
+        {
+            center.RotateRadians(pivot, rotationRadians);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RotateDegrees(float rotationDegrees)
+        {
+            RotateRadians(AngleUtility.DegreesToRadians(rotationDegrees));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RotateDegrees(in Point pivot, float rotationDegrees)
+        {
+            RotateRadians(pivot, AngleUtility.DegreesToRadians(rotationDegrees));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Scale(float xFactor, float yFactor, float radiusFactor)
+        {
+            center.Scale(xFactor, yFactor);
+            radius *= MathF.Abs(radiusFactor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Scale(float factor)
+        {
+            Scale(factor, factor, factor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Scale(in Point pivot, float xFactor, float yFactor, float radiusFactor)
+        {
+            center.Scale(pivot, xFactor, yFactor);
+            radius *= MathF.Abs(radiusFactor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Scale(in Point pivot, float factor)
+        {
+            Scale(pivot, factor, factor, factor);
+        }
+
         public readonly void GetBounds(out float xMin, out float yMin, out float xMax, out float yMax)
         {
             // X and width.
@@ -116,11 +167,59 @@ namespace Kojuelo.Geo2D
             return GetTranslated(direction.GetTranslation(length));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Circle GetRotatedRadians(float rotationRadians)
+        {
+            return new Circle(center.GetRotatedRadians(rotationRadians), radius);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Circle GetRotatedRadians(in Point pivot, float rotationRadians)
+        {
+            return new Circle(center.GetRotatedRadians(pivot, rotationRadians), radius);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Circle GetRotatedDegrees(float rotationDegrees)
+        {
+            return GetRotatedRadians(AngleUtility.DegreesToRadians(rotationDegrees));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Circle GetRotatedDegrees(in Point pivot, float rotationDegrees)
+        {
+            return GetRotatedRadians(pivot, AngleUtility.DegreesToRadians(rotationDegrees));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Circle GetScaled(float xFactor, float yFactor, float radiusFactor)
+        {
+            return new Circle(center.GetScaled(xFactor, yFactor), radius * radiusFactor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Circle GetScaled(float factor)
+        {
+            return GetScaled(factor, factor, factor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Circle GetScaled(in Point pivot, float xFactor, float yFactor, float radiusFactor)
+        {
+            return new Circle(center.GetScaled(pivot, xFactor, yFactor), radius * radiusFactor);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Circle GetScaled(in Point pivot, float factor)
+        {
+            return GetScaled(pivot, factor, factor, factor);
+        }
+
         public readonly override string ToString()
         {
             return $"{{{center}, {radius}}}";
         }
-    
+
         public readonly override bool Equals(object obj)
         {
             if (obj is Circle objCircle)
